@@ -4,40 +4,51 @@
     <meta charset="UTF-8">
     <title>Horoscope WebApp</title>
     <script>
-    async function submitForm() {
-    const astrologySign = document.getElementById('astrology_sign').value;
-    const yearOfBirth = document.getElementById('year_of_birth').value;
-    const horoscopeDisplay = document.getElementById('horoscope_display');
-    const loading = document.getElementById('loading');
-
-    // Hide any existing horoscope and show the loading message
-    if (horoscopeDisplay.children.length > 0) {
-        horoscopeDisplay.children[0].style.display = 'none';
-    }
-    loading.style.display = 'block';
-
-    const response = await fetch('/get_horoscope', {
-        method: 'POST',
-        body: new FormData(document.querySelector('form'))
+window.onload = function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        await submitForm();
     });
 
-    const data = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(data, 'text/html');
-    const horoscope = doc.querySelector('#horoscope_display').innerHTML;
 
-    // Update the horoscope and hide the loading message
-    horoscopeDisplay.innerHTML = horoscope;
-    loading.style.display = 'none';
-}
+    async function submitForm() {
+        const astrologySign = document.getElementById('astrology_sign').value;
+        const name = document.getElementById('name').value;
+        const horoscopeDisplay = document.getElementById('horoscope_display');
+        const loading = document.getElementById('loading');
 
+        // Hide any existing horoscope and show the loading message
+        if (horoscopeDisplay.children.length > 0) {
+            horoscopeDisplay.children[0].style.display = 'none';
+        }
+        loading.style.display = 'block';
 
+        const response = await fetch('/get_horoscope', {
+            method: 'POST',
+            body: new FormData(document.querySelector('form'))
+        });
 
+        const data = await response.blob();
+        let img = horoscopeDisplay.querySelector('img');
+        if (!img) {
+            img = document.createElement('img');
+            horoscopeDisplay.appendChild(img);
+        }
+        img.src = URL.createObjectURL(data);
+
+        // Hide the loading message
+        loading.style.display = 'none';
+    }
+};
 </script>
+
 </head>
 <body>
     <h1>Daily Horoscope</h1>
-    <form onsubmit="event.preventDefault(); submitForm();">
+    <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required><br>
         <label for="astrology_sign">Astrology Sign:</label>
 <select id="astrology_sign" name="astrology_sign">
     <option value="Aries">Aries</option>
@@ -52,13 +63,6 @@
     <option value="Capricorn">Capricorn</option>
     <option value="Aquarius">Aquarius</option>
     <option value="Pisces">Pisces</option>
-</select><br>
-
-        <label for="year_of_birth">Year of Birth:</label>
-<select id="year_of_birth" name="year_of_birth">
-    {% for year in range(current_year - 90, current_year + 1) %}
-        <option value="{{ year }}">{{ year }}</option>
-    {% endfor %}
 </select><br>
         <label for="area">Horoscope Area</label>
         <select id="area" name="area">
