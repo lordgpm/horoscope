@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 import openai
 from datetime import datetime
 
-openai.api_key = "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"
+openai.api_key = "openai_api_key"
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
