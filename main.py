@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import openai
 import os
 import io
@@ -11,9 +12,10 @@ from PIL import Image, ImageDraw, ImageFont
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def main(request: Request):
@@ -34,17 +36,17 @@ async def get_horoscope_from_chatgpt(astrology_sign: str, name: str, area: str) 
         {"role": "user", "content": f"Provide a daily horoscope reading based on the date today:{today_date}, {current_day} for {astrology_sign} for {area}."
                                           f"Mention the date  and day today as well. "
                                           f"The output should have separate sentences in this format: 'Hi there {name}! Here's your daily horoscope for {astrology_sign}, [provide the date today, {today_date} and current day, {current_day}]. [provide the horoscope]."
-                                        f"Try to make it funny and witty "
+                                        f"Try to make it sexy, funny and as witty as possible. Do not self reference. Do not explain that you are an AI model. Just provide the horoscope output."
                                     f"Strictly keep it under 4 sentences."
                                           }]
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        temperature=0.5,
+        temperature=0.7,
         frequency_penalty=1.4,
-        presence_penalty=0.1,
+        presence_penalty=0.3,
         messages=prompt,
-        max_tokens=80,
+        max_tokens=100,
         stream=False)
 
     horoscope = response.choices[0]['message']['content'].strip()
@@ -58,9 +60,29 @@ def split_sentences(text):
 # Updated create_horoscope_image function
 async def create_horoscope_image(horoscope: str) -> bytes:
     # Create a blank image with a white background and increased dimensions
-    width, height = 600, 400
+    width, height = 800, 400
     image = Image.new('RGB', (width, height), 'white')
     draw = ImageDraw.Draw(image)
+
+    # Open the logo image
+    logo = Image.open('static/logos/cosmo.png')
+   
+   
+    # Calculate the new size of the logo
+    new_width = 200
+    logo_width, logo_height = logo.size
+    new_height = int(logo_height * new_width / logo_width)
+
+    # Resize the logo
+    logo = logo.resize((new_width, new_height))
+
+    # Calculate the position to paste the logo
+    logo_width, logo_height = logo.size
+    x_logo = 10  # Set some padding from the left edge of the image
+    y_logo = 10  # Set some padding from the top edge of the image
+
+    # Paste the logo onto the main image
+    image.paste(logo, (x_logo, y_logo), mask=logo)
 
     # Load a font and set its size
     font = ImageFont.truetype("static/fonts/Muli.ttf", 20)
