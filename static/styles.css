@@ -1,0 +1,76 @@
+/* General styles */
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Container for the main content */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  /* Header styles */
+  header {
+    background-color: #f26a8d;
+    padding: 20px 0;
+  }
+  
+  header h1 {
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  /* Form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  form label,
+  form input,
+  form select,
+  form button {
+    width: 100%;
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+  
+  form input,
+  form select {
+    padding: 10px;
+  }
+  
+  form button {
+    background-color: #f26a8d;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  form button:hover {
+    background-color: #e9577b;
+  }
+  
+  /* Horoscope display styles */
+  #horoscope_display {
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  /* Loading message styles */
+  #loading {
+    text-align: center;
+  }
+  
